@@ -1,4 +1,5 @@
 using Auth0.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,9 +10,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using StlBackend.Controllers;
 using StlBackend.Data;
+using StlBackend.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace StlBackend
@@ -39,8 +42,8 @@ namespace StlBackend
                 options.UseSqlServer(Configuration.GetConnectionString("StlConnection"))
             );
 
+            services.AddScoped<UserController, UserController>();
             services.AddControllersWithViews();
-            services.AddTransient<UserController, UserController>();
             services.AddApplicationInsightsTelemetry();
         }
 
@@ -64,6 +67,7 @@ namespace StlBackend
             {
                 var context = scope.ServiceProvider.GetRequiredService<InventaryContext>();
                 context.Database.Migrate();
+
             }
 
             app.UseAuthentication();

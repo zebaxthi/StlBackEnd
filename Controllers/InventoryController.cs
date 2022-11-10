@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StlBackend.Data;
 using StlBackend.Models;
+using StlBackend.ViewModels;
 
 namespace StlBackend.Controllers
 {
@@ -15,7 +17,7 @@ namespace StlBackend.Controllers
     {
         private readonly InventaryContext _context;
 
-        public InventoryController(InventaryContext context)
+        public InventoryController(InventaryContext context, UserController userController)
         {
             _context = context;
         }
@@ -67,6 +69,16 @@ namespace StlBackend.Controllers
             if (ModelState.IsValid)
             {
                 inventoryModel.Id = Guid.NewGuid();
+                inventoryModel.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                User user = new User()
+                {
+                    Id = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value,
+                    Name = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,
+                    LastName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value,
+                    EmailAddress = "a", //User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+                    Role = "a" //User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value,
+                };
+                _context.Add(user);
                 _context.Add(inventoryModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

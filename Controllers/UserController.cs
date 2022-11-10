@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,27 +49,24 @@ namespace StlBackend.Controllers
 
         // GET: User/Create
         [Authorize]
-        public IActionResult Create()
+        public async void Create(IEnumerable<Claim> userClaim)
         {
-            return View();
         }
 
         // POST: User/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EmailAddress,Name,LastName,Role")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
+        //[Authorize]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async void Create([Bind("Id,EmailAddress,Name,LastName,Role")] User user)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(user);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //}
 
         // GET: User/Edit/5
         [Authorize]
